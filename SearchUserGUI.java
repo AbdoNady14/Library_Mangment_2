@@ -38,7 +38,7 @@ public class SearchUserGUI extends JFrame {
     private void searchUser() {
         try {
             int id = Integer.parseInt(idField.getText());
-            User user = admin.searchbyID(id);
+            User user = admin.searchById(id);
 
             if (user != null) {
                 dispose();

@@ -5,6 +5,7 @@ import java.util.*;
 public class Patron extends User {
         private static final  File file = new File("Library.csv");
         private static final  File historyFile = new File("CheckoutHistory.csv");
+        private static final File reservationFile = new File("reservaionRequests.csv");
     
     public Patron() {
         super();
@@ -15,11 +16,28 @@ public class Patron extends User {
         this.setAccountType(AccountType.PATRON);
     }
     
-    public BookStatus requestReservation(Book book) {
-        book=this.searchBook(book.gettitle());
-        Librarian librarian = new Librarian();
-        return librarian.reserveBook(book,this.getId());
+    public void requestReservation(int id,String title) {
+        Book book = new Book();
+        book = this.searchBook(title);
+        if (book == null) {
+            System.out.println("Book not found.");
+            return;
+        }
+        try {
+            if (!reservationFile.exists()) {
+                PrintWriter pw = new PrintWriter(new FileWriter(reservationFile));
+                pw.println("patronId,bookId,requestDate,status");
+                pw.close();
+            }
+            PrintWriter pw = new PrintWriter(new FileWriter(reservationFile, true));
+            pw.println(id + "," + book.getbookId() + "," + new Date().toString() + "," + "PENDING");
+            pw.close();
+            System.out.println("Reservation request submitted.");
+        } catch (IOException e) {
+            System.out.println("Error writing reservation request: " + e.getMessage());
+        }
     }
+    
    public void returnBook(Book book) {
        Librarian librarian = new Librarian();
        librarian.returnBook(book,this.getId());
@@ -50,6 +68,7 @@ public class Patron extends User {
             return null;
         }
     }
+
 
        public static List<String> searchGenre(Genre genre){
         List<String> foundBooks = new ArrayList<>();
@@ -102,9 +121,13 @@ public class Patron extends User {
         }
         return foundBooks;
     }
+
+
     public static String viewBook(Book book ){
     return book.toString();
     }
+
+
     public void addBookToCheckoutHistory(Book book) {
         try {
             if (!historyFile.exists()) {
@@ -129,12 +152,14 @@ public class Patron extends User {
                 }
             }
             PrintWriter pw = new PrintWriter(new FileWriter(historyFile, true));
-            pw.println(this.getId() + "," + book.getbookId() + "," + new Date().toString() + ",," + "CHECKED_OUT");
+            pw.println(this.getId() + "," + book.getbookId() + "," + new Date().toString() + "," + "CHECKED_OUT");
             pw.close();
         } catch (IOException e) {
             System.out.println("Error writing history: " + e.getMessage());
         }
     }
+
+
     public List<String> getCheckoutHistory() {
         List<String> history = new ArrayList<>();
         try {

@@ -131,7 +131,7 @@ public class Book {
             }
         }
         PrintWriter writer = new PrintWriter(new FileWriter(file, true));
-        writer.println( book.getbookId()+","+book.gettitle() + "," + book.getPublishingHouse() + "," + book.getAuther() + "," + book.getDateOfPublication() + "," + book.getGenre() + "," + book.getBookDescription() );
+        writer.println( book.getbookId()+","+book.gettitle() + "," + book.getPublishingHouse() + "," + book.getAuther() + "," + book.getDateOfPublication() + "," + book.getGenre() + "," + book.getBookDescription() +"," + book.getStatus().toString() );
         writer.close();
         System.out.println("Book added to the library successfully.");
     }
@@ -196,6 +196,7 @@ public class Book {
         }
         return foundBooks;
     }
+
     public static List<String> searchAuthor(String author){
         List<String> foundBooks = new ArrayList<>();
         try {
@@ -213,6 +214,7 @@ public class Book {
         }
         return foundBooks;
     }
+
     public static List<String> searchPublishHouse(String publishHouse){
         List<String> foundBooks = new ArrayList<>();
         try {
@@ -230,6 +232,7 @@ public class Book {
         }
         return foundBooks;
     }
+    
     public static String viewBook(Book book ){
     return book.toString();
     }

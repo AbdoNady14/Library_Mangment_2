@@ -97,6 +97,8 @@ public abstract  class User{
 
         System.out.println("Login failed.");
     }
+
+
     public boolean login(String uname, String pass) {
 
         if (this.loginStatus) {
@@ -133,6 +135,7 @@ public abstract  class User{
         return false;
     }
     
+
     public void logout() {
         if(!this.loginStatus){
             System.out.println("You are not logged in");
@@ -144,7 +147,6 @@ public abstract  class User{
 
 
 public boolean updateAccount(String newUsername, String newPassword) {
-
 
     try (Scanner sc = new Scanner(USERS_FILE)) {
         List<String> lines = new ArrayList<>();
@@ -185,6 +187,7 @@ public boolean updateAccount(String newUsername, String newPassword) {
     
     return false;
 }
+
 
 public void deleteAccount(int id) {
     try {
