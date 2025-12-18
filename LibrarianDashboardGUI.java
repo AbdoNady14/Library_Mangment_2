@@ -8,7 +8,7 @@ public class LibrarianDashboardGUI extends JFrame {
         this.librarian = librarian;
 
         setTitle("Librarian Dashboard");
-        setSize(300, 250);
+        setSize(300, 300);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -21,19 +21,19 @@ public class LibrarianDashboardGUI extends JFrame {
         add(manageUser);
 
         JButton manageReservation = new JButton("Manage Reservation");
-        manageReservation.setBounds(50, 95, 200, 30);
+        manageReservation.setBounds(50, 100, 200, 30);
         add(manageReservation);
 
         JButton ReturnBOOK = new JButton("Return Book");
-        ReturnBOOK.setBounds(50, 95, 200, 30);
+        ReturnBOOK.setBounds(50, 140, 200, 30);
         add(ReturnBOOK);
 
         JButton search = new JButton("Search Book");
-        search.setBounds(50, 130, 200, 30);
+        search.setBounds(50, 180, 200, 30);
         add(search);
 
         JButton logout = new JButton("Logout");
-        logout.setBounds(50, 165, 200, 30);
+        logout.setBounds(50, 220, 200, 30);
         add(logout);
 
         manageUser.addActionListener(e ->
@@ -43,6 +43,14 @@ public class LibrarianDashboardGUI extends JFrame {
         search.addActionListener(e ->
                 new SearchBookGUI()
         );
+
+        manageReservation.addActionListener(e ->
+                new AcceptReservationGUI(librarian)
+        );
+
+        //  ReturnBOOK.addActionListener(e ->
+        //         new ReturnBookGUI(librarian)
+        // );
 
         logout.addActionListener(e -> {
             dispose();

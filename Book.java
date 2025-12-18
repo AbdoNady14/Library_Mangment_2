@@ -158,8 +158,8 @@ public class Book {
         return null;
     }
 
-    public static String searchBook(int id) throws FileNotFoundException {
-        Scanner scan = new Scanner(file);
+    public static Book searchBook(int id){
+        try(Scanner scan = new Scanner(file)){
         while(scan.hasNextLine()){
             String line = scan.nextLine();
             String[] fields = line.split(",");
@@ -173,10 +173,11 @@ public class Book {
                 book.setGenre(fields[5]);
                 book.setBookDescription(fields[6]);
                 scan.close();
-                return book.toString();
+                return book;
             }
         }
-        scan.close();
+        } catch (FileNotFoundException e) {
+        }
         return null;
     }
     public static List<String> searchGenre(Genre genre){

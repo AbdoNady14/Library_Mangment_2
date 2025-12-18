@@ -4,6 +4,8 @@ import java.util.*;
 public class Librarian extends User{
     private static final  File file = new File("Library.csv");
     private static final  File historyFile = new File("CheckoutHistory.csv");
+    private static final File reservationFile = new File("reservaionRequests.csv");
+    private static final File notificationFile = new File("Notifications.csv");
 
     public Librarian() {
         super();
@@ -19,25 +21,27 @@ public class Librarian extends User{
         }
 
 
-    public BookStatus reserveBook(Book book,int patronId){
-        if(book.getStatus() == BookStatus.AVAILABLE){
-            book.setStatus(BookStatus.CHECKED_OUT);
-             book.setPatronId(patronId);
-            Book.updateBookByID(book.getbookId(), book);
-            try (PrintWriter pw = new PrintWriter(new FileWriter(historyFile, true))) {
-                pw.println(patronId + "," + book.getbookId() + "," + new Date().toString() + ",," + "CHECKED_OUT");
-            } catch (IOException e) {
-                System.out.println("Error logging checkout: " + e.getMessage());
-            }
-            return BookStatus.CHECKED_OUT;
+    public BookStatus reserveBook(int patronId, int bookId){
+        Book book = Book.searchBook(bookId); 
+        if(book == null){
+            System.out.println("Book not found.");
+            return null;
         }
-        else if(book.getStatus() == BookStatus.CHECKED_OUT){
-            book.setStatus(BookStatus.RESERVED);
+        BookStatus status = book.getStatus();
+        if(status == null || status == BookStatus.AVAILABLE){
             book.setReservationId(patronId);
-            Book.updateBookByID(book.getbookId(), book);
+            book.setStatus(BookStatus.RESERVED);
+            Book.updateBookByID(bookId, book);
+            String returnDate = updateReservationStatus(patronId, bookId, "ACCEPTED");
+            String message = "Your reservation for book ID " + bookId + " has been accepted.";
+            if (returnDate != null && !returnDate.isEmpty()) {
+                message += " Return date: " + returnDate;
+            }
+            addNotification(patronId, message);
+            System.out.println("Book reserved successfully.");
             return BookStatus.RESERVED;
-        }
-            else{
+        }else{
+            System.out.println("Book is not available for reservation.");
             return book.getStatus();
         }
     }
@@ -84,6 +88,12 @@ public class Librarian extends User{
 
     public static String checkBook(int id){
         return "Avalible";
+    }
+
+    public void rejectReservation(int patronId, int bookId) {
+        updateReservationStatus(patronId, bookId, "REJECTED");
+        addNotification(patronId, "Your reservation for book ID " + bookId + " has been rejected.");
+        System.out.println("Reservation rejected.");
     }
 
       public void returnBook(Book book,int patronId){
@@ -147,4 +157,67 @@ public class Librarian extends User{
             System.out.println("Error updating history: " + e.getMessage());
         }
     }
+
+    private String updateReservationStatus(int patronId, int bookId, String newStatus) {
+        try {
+            if (!reservationFile.exists()) {
+                return "";
+            }
+            Scanner sc = new Scanner(reservationFile);
+            List<String> lines = new ArrayList<>();
+            String computedReturnDate = "";
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                String[] fields = line.split(",");
+                if (fields.length >= 3) {
+                    try {
+                        int pId = Integer.parseInt(fields[0].trim());
+                        int bId = Integer.parseInt(fields[1].trim());
+                        String status = fields[fields.length - 1].trim();
+                        if (pId == patronId && bId == bookId && status.equalsIgnoreCase("PENDING")) {
+                            String requestDate = fields[2].trim();
+                            String returnDate = "";
+                            if (newStatus.equalsIgnoreCase("ACCEPTED")) {
+                                Date now = new Date();
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(now);
+                                cal.add(Calendar.DAY_OF_MONTH, 7);
+                                Date due = cal.getTime();
+                                returnDate = due.toString();
+                                computedReturnDate = returnDate;
+                            }
+                            line = fields[0] + "," + fields[1] + "," + requestDate + "," + returnDate + "," + newStatus;
+                        }
+                    } catch (NumberFormatException ignored) { }
+                }
+                lines.add(line);
+            }
+            sc.close();
+            PrintWriter pw = new PrintWriter(new FileWriter(reservationFile));
+            for (String l : lines) {
+                pw.println(l);
+            }
+            pw.close();
+            return computedReturnDate;
+        } catch (Exception e) {
+            System.out.println("Error updating reservation file: " + e.getMessage());
+            return "";
+        }
+    }
+
+    private void addNotification(int patronId, String message) {
+        try {
+            if (!notificationFile.exists()) {
+                PrintWriter pw = new PrintWriter(new FileWriter(notificationFile));
+                pw.println("patronId,message,date,status");
+                pw.close();
+            }
+            PrintWriter pw = new PrintWriter(new FileWriter(notificationFile, true));
+            pw.println(patronId + "," + message.replace(",", " ") + "," + new Date().toString() + ",UNREAD");
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Error writing notification: " + e.getMessage());
+        }
+    }
 }
+     

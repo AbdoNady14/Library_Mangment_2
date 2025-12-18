@@ -62,11 +62,11 @@ public class SearchBookGUI extends JFrame {
             switch ((String) searchType.getSelectedItem()) {
 
                 case "ID":
-                    bookData = Book.searchBook(Integer.parseInt(value));
+                    bookData = Book.searchBook(Integer.parseInt(value)).toString();
                     break;
 
                 case "Title":
-                    bookData = Book.searchBook(value);
+                    bookData = Book.searchBook(value).toString();
                     break;
 
                 case "Author":

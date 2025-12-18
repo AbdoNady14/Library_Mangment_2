@@ -9,7 +9,7 @@ public class PatronDashboardGUI extends JFrame {
         this.patron = patron;
 
         setTitle("Patron Dashboard");
-        setSize(300, 350);
+        setSize(300, 400);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -33,12 +33,16 @@ public class PatronDashboardGUI extends JFrame {
         viewCheckoutHistory.setBounds(50, 180, 200, 30);
         add(viewCheckoutHistory);
 
+        JButton notifications = new JButton("Notifications");
+        notifications.setBounds(50, 220, 200, 30);
+        add(notifications);
+
         JButton Manage = new JButton("Manage Account");
-        Manage.setBounds(50, 220, 200, 30);
+        Manage.setBounds(50, 260, 200, 30);
         add(Manage);
 
         JButton logout = new JButton("Logout");
-        logout.setBounds(50, 260, 200, 30);
+        logout.setBounds(50, 300, 200, 30);
         add(logout);
 
         // Actions
@@ -47,6 +51,7 @@ public class PatronDashboardGUI extends JFrame {
         reserveBook.addActionListener(e -> new ReservationRequestGUI(patron.getId()));
         returnBook.addActionListener(e -> new ReturnBookGUI(patron));
         viewCheckoutHistory.addActionListener(e -> new CheckoutHistoryGUI(patron));
+        notifications.addActionListener(e -> new NotificationsGUI(patron));
         logout.addActionListener(e -> {
             dispose();
             new LoginGUI();

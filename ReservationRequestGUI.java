@@ -4,7 +4,7 @@ public class ReservationRequestGUI extends JFrame {
      JTextField title;
      Patron patron=new Patron();
      public ReservationRequestGUI(int id) {
-         setTitle("Reservation Request");
+        setTitle("Reservation Request");
         setSize(300, 200);
         setLayout(null);
 
