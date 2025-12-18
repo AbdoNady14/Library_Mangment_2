@@ -1,0 +1,10 @@
+first,adminPass,1,ADMIN
+second,fady,2,ADMIN
+third,patronPass2,3,PATRON
+fourth,librarianPass,4,LIBRARIAN
+fifth,patronPass2,5,PATRON
+sixth,librarianPass,6,LIBRARIAN
+seventh,patronPass2,7,PATRON
+a,a,8,ADMIN
+l,l,9,LIBRARIAN
+p,p,10,PATRON
